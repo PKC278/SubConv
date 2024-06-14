@@ -3,7 +3,7 @@ LABEL name="subconv"
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt .
 
 # Install dependencies
 RUN apk add --update-cache ca-certificates tzdata patchelf clang ccache
@@ -12,6 +12,7 @@ RUN apk add --update-cache ca-certificates tzdata patchelf clang ccache
 RUN pip3 install -r requirements.txt && \
     pip3 install nuitka
 
+COPY . .
 # Use nuikta to compile the python code
 RUN --mount=type=cache,target=/root/.cache/Nuitka \
     python3 -m nuitka --clang --onefile --standalone api.py && \

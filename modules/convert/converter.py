@@ -1,5 +1,3 @@
-
-
 from modules.convert.util import RandUserAgent
 from modules.convert.util import get
 from modules.convert.util import uniqueName
@@ -69,7 +67,8 @@ async def ConvertsV2Ray(buf):
             hysteria["up"] = up
             hysteria["down"] = down
             hysteria["skip-cert-verify"] = bool(
-                distutils.util.strtobool(query.get("insecure")))
+                distutils.util.strtobool(query.get("insecure"))
+            )
 
             proxies.append(hysteria)
         elif scheme == "hysteria2" or scheme == "hy2":
@@ -101,7 +100,8 @@ async def ConvertsV2Ray(buf):
             if sni != "":
                 hysteria2["sni"] = sni
             hysteria2["skip-cert-verify"] = bool(
-                distutils.util.strtobool(query.get("insecure")))
+                distutils.util.strtobool(query.get("insecure"))
+            )
             alpn = get(query.get("alpn"))
             if alpn != "":
                 hysteria2["alpn"] = alpn.split(",")
@@ -128,8 +128,7 @@ async def ConvertsV2Ray(buf):
             query = dict(urlparse.parse_qsl(urlTUIC.query))
 
             tuic = {}
-            tuic["name"] = uniqueName(
-                names, urlparse.unquote(urlTUIC.fragment))
+            tuic["name"] = uniqueName(names, urlparse.unquote(urlTUIC.fragment))
             tuic["type"] = scheme
             tuic["server"] = urlTUIC.hostname
             tuic["port"] = urlTUIC.port
@@ -174,7 +173,8 @@ async def ConvertsV2Ray(buf):
             trojan["password"] = urlTrojan.password
             trojan["udp"] = True
             trojan["skip-cert-verify"] = bool(
-                distutils.util.strtobool(query.get("allowInsecure")))
+                distutils.util.strtobool(query.get("allowInsecure"))
+            )
 
             sni = get(query.get("sni"))
             if sni != "":
@@ -368,7 +368,7 @@ async def ConvertsV2Ray(buf):
                     continue
 
                 try:
-                    urlSS = urlparse.urlparse("ss://"+dcBuf)
+                    urlSS = urlparse.urlparse("ss://" + dcBuf)
                 except:
                     continue
 
@@ -488,7 +488,7 @@ async def ConvertsV2Ray(buf):
             password = get(query.get("pass"))
             if password != "":
                 tg["password"] = password
-            
+
             proxies.append(tg)
 
         elif scheme == "https":
@@ -521,7 +521,6 @@ async def ConvertsV2Ray(buf):
                 tg["passwork"] = password
 
             proxies.append(tg)
-
 
     if len(proxies) == 0:
         raise Exception("No valid proxies found")
