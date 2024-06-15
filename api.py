@@ -3,7 +3,12 @@
 
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
-from fastapi.responses import FileResponse, Response, StreamingResponse
+from fastapi.responses import (
+    FileResponse,
+    Response,
+    StreamingResponse,
+    PlainTextResponse,
+)
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
@@ -105,6 +110,27 @@ def length(sth):
 
 app = FastAPI()
 
+
+async def fetch_url(url: str, request: Request, method: str):
+    headers = {"Content-Type": "text/yaml;charset=utf-8"}
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.request(
+            method, url, headers={"User-Agent": request.headers["User-Agent"]}
+        )
+        if resp.status_code < 200 or resp.status_code >= 400:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+
+        original_headers = resp.headers
+        if "subscription-userinfo" in original_headers:
+            headers["subscription-userinfo"] = original_headers["subscription-userinfo"]
+        if "Content-Disposition" in original_headers:
+            headers["Content-Disposition"] = original_headers[
+                "Content-Disposition"
+            ].replace("attachment", "inline")
+    return resp, headers
+
+
 # mainpage
 app.mount("/static", StaticFiles(directory="page/dist"), name="static")
 
@@ -126,63 +152,18 @@ async def robots():
 # subscription to proxy-provider
 @app.get("/provider")
 async def provider(request: Request):
-    headers = {"Content-Type": "text/yaml;charset=utf-8"}
     url = request.query_params.get("url")
-    redirect_count = 0  # 初始化重定向计数器
-
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            url, headers={"User-Agent": request.headers["User-Agent"]}
-        )
-        if resp.status_code < 200 or resp.status_code >= 400:
-            raise HTTPException(status_code=resp.status_code, detail=resp.text)
-        elif resp.status_code >= 300 and resp.status_code < 400:
-            while resp.status_code >= 300 and resp.status_code < 400:
-                if redirect_count >= 5:
-                    raise HTTPException(status_code=500, detail="Too many redirects")
-                url = resp.headers["Location"]
-                resp = await client.get(
-                    url, headers={"User-Agent": request.headers["User-Agent"]}
-                )
-                redirect_count += 1  # 更新重定向计数器
-                if resp.status_code < 200 or resp.status_code >= 400:
-                    raise HTTPException(status_code=resp.status_code, detail=resp.text)
-        result = await parse.parseSubs(resp.text)
+    resp, headers = await fetch_url(url, request, method="GET")
+    result = await parse.parseSubs(resp.text)
     result = result.replace("\U0001F1F9\U0001F1FC", "\U0001F1E8\U0001F1F3")
     return Response(content=result, headers=headers)
 
 
+# subscription to proxy-provider
 @app.head("/provider")
 async def provider_head(request: Request):
-    headers = {"Content-Type": "text/yaml;charset=utf-8"}
     url = request.query_params.get("url")
-    redirect_count = 0  # 初始化重定向计数器
-
-    async with httpx.AsyncClient() as client:
-        resp = await client.head(
-            url, headers={"User-Agent": request.headers["User-Agent"]}
-        )
-        if resp.status_code < 200 or resp.status_code >= 400:
-            raise HTTPException(status_code=resp.status_code, detail=resp.text)
-        elif resp.status_code >= 300 and resp.status_code < 400:
-            while resp.status_code >= 300 and resp.status_code < 400:
-                if redirect_count >= 5:
-                    raise HTTPException(status_code=500, detail="Too many redirects")
-                url = resp.headers["Location"]
-                resp = await client.head(
-                    url, headers={"User-Agent": request.headers["User-Agent"]}
-                )
-                redirect_count += 1  # 更新重定向计数器
-                if resp.status_code < 200 or resp.status_code >= 400:
-                    raise HTTPException(status_code=resp.status_code, detail=resp.text)
-
-        originalHeaders = resp.headers
-        if "subscription-userinfo" in originalHeaders:
-            headers["subscription-userinfo"] = originalHeaders["subscription-userinfo"]
-        if "Content-Disposition" in originalHeaders:
-            headers["Content-Disposition"] = originalHeaders[
-                "Content-Disposition"
-            ].replace("attachment", "inline")
+    _, headers = await fetch_url(url, request, method="HEAD")
     return Response(content=None, headers=headers)
 
 
@@ -191,13 +172,8 @@ async def provider_head(request: Request):
 async def sub(request: Request):
     args = request.query_params
     # get interval
-    if "interval" in args:
-        interval = args["interval"]
-    else:
-        interval = "86400"
-
+    interval = args.get("interval", "86400")
     short = args.get("short")
-
     # get proxyrule
     notproxyrule = args.get("npr")
 
@@ -248,59 +224,19 @@ async def sub(request: Request):
     if urlstandbystandalone:
         urlstandbystandalone = await converter.ConvertsV2Ray(urlstandbystandalone)
 
-    async with httpx.AsyncClient() as client:
-        # get original headers
-        headers = {"Content-Type": "text/yaml;charset=utf-8"}
-        # if there's only one subscription, return userinfo
-        if length(url) == 1:
-            redirect_count = 0  # 初始化重定向计数器
+    if url is not None and len(url) == 1:
+        resp, headers = await fetch_url(url[0], request, method="HEAD")
 
-            resp = await client.head(
-                url[0], headers={"User-Agent": request.headers["User-Agent"]}
+    content = []
+    if url is not None:
+        for i in range(len(url)):
+            resp, _ = await fetch_url(url[i], request, method="GET")
+            content.append(await parse.parseSubs(resp.text))
+            subURL.append(url[i])
+            url[i] = "{}provider?{}".format(
+                request.base_url, urlencode({"url": url[i]})
             )
-            if resp.status_code < 200 or resp.status_code >= 400:
-                raise HTTPException(status_code=resp.status_code, detail=resp.text)
-            elif resp.status_code >= 300 and resp.status_code < 400:
-                while resp.status_code >= 300 and resp.status_code < 400:
-                    if redirect_count >= 5:
-                        raise HTTPException(
-                            status_code=500, detail="Too many redirects"
-                        )
-                    url[0] = resp.headers["Location"]
-                    resp = await client.head(
-                        url[0], headers={"User-Agent": request.headers["User-Agent"]}
-                    )
-                    redirect_count += 1  # 更新重定向计数器
-                    if resp.status_code < 200 or resp.status_code >= 400:
-                        raise HTTPException(
-                            status_code=resp.status_code, detail=resp.text
-                        )
-            originalHeaders = resp.headers
-            if (
-                "subscription-userinfo" in originalHeaders
-            ):  # containing info about ramaining flow
-                headers["subscription-userinfo"] = originalHeaders[
-                    "subscription-userinfo"
-                ]
-            if "Content-Disposition" in originalHeaders:  # containing filename
-                headers["Content-Disposition"] = originalHeaders[
-                    "Content-Disposition"
-                ].replace("attachment", "inline")
 
-        content = []  # the proxies of original subscriptions
-        if url is not None:
-            for i in range(len(url)):
-                # the test of response
-                respText = (
-                    await client.get(
-                        url[i], headers={"User-Agent": request.headers["User-Agent"]}
-                    )
-                ).text
-                content.append(await parse.parseSubs(respText))
-                subURL.append(url[i])
-                url[i] = "{}provider?{}".format(
-                    request.base_url, urlencode({"url": url[i]})
-                )
     if len(content) == 0:
         content = None
     if urlstandby:
@@ -333,51 +269,18 @@ async def sub(request: Request):
 @app.head("/sub")
 async def get_remote_headers(request: Request):
     args = request.query_params
-    # 获取 url 参数
     url = args.get("url")
     if url:
         url = re.split(r"[|\n]", url)
-        # 移除空行
         tmp = list(filter(lambda x: x != "", url))
         url = [i for i in tmp if i.startswith("http://") or i.startswith("https://")]
     if not url:
         raise HTTPException(
             status_code=400, detail="URL is required and should be valid"
         )
-    headers = {"Content-Type": "text/yaml;charset=utf-8"}
-    async with httpx.AsyncClient() as client:
-        if len(url) == 1:
-            redirect_count = 0  # 初始化重定向计数器
 
-            resp = await client.head(
-                url[0], headers={"User-Agent": request.headers["User-Agent"]}
-            )
-            if resp.status_code < 200 or resp.status_code >= 400:
-                raise HTTPException(status_code=resp.status_code, detail=resp.text)
-            elif resp.status_code >= 300 and resp.status_code < 400:
-                while resp.status_code >= 300 and resp.status_code < 400:
-                    if redirect_count >= 5:
-                        raise HTTPException(
-                            status_code=500, detail="Too many redirects"
-                        )
-                    url[0] = resp.headers["Location"]
-                    resp = await client.head(
-                        url[0], headers={"User-Agent": request.headers["User-Agent"]}
-                    )
-                    redirect_count += 1  # 更新重定向计数器
-                    if resp.status_code < 200 or resp.status_code >= 400:
-                        raise HTTPException(
-                            status_code=resp.status_code, detail=resp.text
-                        )
-            originalHeaders = resp.headers
-            if "subscription-userinfo" in originalHeaders:
-                headers["subscription-userinfo"] = originalHeaders[
-                    "subscription-userinfo"
-                ]
-            if "Content-Disposition" in originalHeaders:
-                headers["Content-Disposition"] = originalHeaders[
-                    "Content-Disposition"
-                ].replace("attachment", "inline")
+    if len(url) == 1:
+        _, headers = await fetch_url(url[0], request, method="HEAD")
     return Response(content=None, headers=headers)
 
 
@@ -386,7 +289,7 @@ async def get_remote_headers(request: Request):
 async def proxy(request: Request, url: str):
     parsed_url = urlparse(url)
     if parsed_url.netloc != "raw.githubusercontent.com":
-        raise HTTPException(status_code=403, detail="Forbidden")
+        return PlainTextResponse("Forbidden", status_code=403)
 
     # file was big so use stream
     async def stream():
@@ -394,21 +297,17 @@ async def proxy(request: Request, url: str):
             async with client.stream(
                 "GET", url, headers={"User-Agent": request.headers["User-Agent"]}
             ) as resp:
-                yield resp.status_code
-                yield resp.headers
                 if resp.status_code < 200 or resp.status_code >= 400:
-                    yield await resp.aread()
+                    yield resp.status_code, resp.headers, await resp.aread()
                     return
+                yield resp.status_code, resp.headers, None
                 async for chunk in resp.aiter_bytes():
                     yield chunk
 
     streamResp = stream()
-    status_code = await streamResp.__anext__()
-    headers = await streamResp.__anext__()
+    status_code, headers, error_body = await streamResp.__anext__()
     if status_code < 200 or status_code >= 400:
-        raise HTTPException(
-            status_code=status_code, detail=await streamResp.__anext__()
-        )
+        raise HTTPException(status_code=status_code, detail=error_body)
     return StreamingResponse(streamResp, media_type=headers["Content-Type"])
 
 
