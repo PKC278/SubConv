@@ -308,7 +308,15 @@ async def proxy(request: Request, url: str):
     status_code, headers, error_body = await streamResp.__anext__()
     if status_code < 200 or status_code >= 400:
         raise HTTPException(status_code=status_code, detail=error_body)
-    return StreamingResponse(streamResp, media_type=headers["Content-Type"])
+    filename = url.split("/")[-1]
+    # 对文件名进行适当的编码/处理以确保特殊字符的兼容性
+    headers = {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": f'attachment; filename="{filename}"',
+    }
+    return StreamingResponse(
+        streamResp, media_type=headers["Content-Type"], headers=headers
+    )
 
 
 # static files
