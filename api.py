@@ -113,6 +113,8 @@ app = FastAPI()
 
 async def fetch_url(url: str, request: Request, method: str):
     headers = {"Content-Type": "text/yaml;charset=utf-8"}
+    redirect_count = 0
+    max_redirects = 5
 
     async with httpx.AsyncClient() as client:
         resp = await client.request(
@@ -120,7 +122,17 @@ async def fetch_url(url: str, request: Request, method: str):
         )
         if resp.status_code < 200 or resp.status_code >= 400:
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
-
+        elif resp.status_code >= 300 and resp.status_code < 400:
+            while resp.status_code >= 300 and resp.status_code < 400:
+                if redirect_count >= max_redirects:
+                    raise HTTPException(status_code=500, detail="Too many redirects")
+                url = resp.headers["Location"]
+                resp = await client.request(
+                    method, url, headers={"User-Agent": request.headers["User-Agent"]}
+                )
+                redirect_count += 1
+                if resp.status_code < 200 or resp.status_code >= 400:
+                    raise HTTPException(status_code=resp.status_code, detail=resp.text)
         original_headers = resp.headers
         if "subscription-userinfo" in original_headers:
             headers["subscription-userinfo"] = original_headers["subscription-userinfo"]
