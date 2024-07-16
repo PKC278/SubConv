@@ -103,7 +103,8 @@ CUSTOM_PROXY_GROUP:
   - name: 🎮 游戏平台
     icon: https://github.com/shindgewongxj/WHATSINStash/raw/main/icon/applegamecenter.png
     type: select
-    prior: DIRECT
+    list: true
+    prior: 🇭🇰 香港节点,DIRECT
   - name: 🔎 Bing
     icon: https://github.com/shindgewongxj/WHATSINStash/raw/main/icon/bing.png
     type: select
