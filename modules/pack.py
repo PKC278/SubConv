@@ -84,7 +84,7 @@ async def pack(
                             "path": "./sub/{}{}.yaml".format(subDomain, u),
                             "health-check": {
                                 "enable": True,
-                                "interval": 1800,
+                                "interval": 600,
                                 # "lazy": True,
                                 "url": config.configInstance.TEST_URL,
                             },
@@ -105,7 +105,7 @@ async def pack(
                             "path": "./sub/{}{}.yaml".format(subDomain, "sub" + str(u)),
                             "health-check": {
                                 "enable": True,
-                                "interval": 1800,
+                                "interval": 600,
                                 # "lazy": True,
                                 "url": config.configInstance.TEST_URL,
                             },
@@ -252,7 +252,7 @@ async def pack(
                 if proxyGroup is not None:
                     if type in ["load-balance", "fallback", "url-test"]:
                         proxyGroup["url"] = config.configInstance.TEST_URL
-                        proxyGroup["interval"] = 1800
+                        proxyGroup["interval"] = 600
                         proxyGroup["tolerance"] = 50
 
                     if type == "load-balance":
