@@ -84,7 +84,7 @@ async def pack(
                             "path": "./sub/{}{}.yaml".format(subDomain, u),
                             "health-check": {
                                 "enable": True,
-                                "interval": 600,
+                                "interval": 1800,
                                 # "lazy": True,
                                 "url": config.configInstance.TEST_URL,
                             },
@@ -105,7 +105,7 @@ async def pack(
                             "path": "./sub/{}{}.yaml".format(subDomain, "sub" + str(u)),
                             "health-check": {
                                 "enable": True,
-                                "interval": 600,
+                                "interval": 1800,
                                 # "lazy": True,
                                 "url": config.configInstance.TEST_URL,
                             },
@@ -187,9 +187,13 @@ async def pack(
                         "🚀 手动选择",
                     ]
                 elif prior == "PROXY":
-                    proxies = ["🚀 节点选择", *common_proxies, "🚀 手动选择", "DIRECT"]
+                    proxies = ["🚀 节点选择", *common_proxies, "🚀 手动选择"]
+                elif prior == "FINAL":
+                    proxies = ["🚀 节点选择", "DIRECT"]
                 else:
-                    proxies = [prior, "🚀 手动选择"]
+                    prior = group.prior.split(",")
+                    else_proxies = [p for p in common_proxies if p not in prior]
+                    proxies = [*prior, *else_proxies, "🚀 手动选择", "DIRECT"]
 
             proxyGroups["proxy-groups"].append(
                 create_proxy_group(group, prior, proxies)
@@ -252,7 +256,7 @@ async def pack(
                 if proxyGroup is not None:
                     if type in ["load-balance", "fallback", "url-test"]:
                         proxyGroup["url"] = config.configInstance.TEST_URL
-                        proxyGroup["interval"] = 600
+                        proxyGroup["interval"] = 1800
                         proxyGroup["tolerance"] = 50
 
                     if type == "load-balance":
