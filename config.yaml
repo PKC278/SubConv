@@ -124,49 +124,49 @@ CUSTOM_PROXY_GROUP:
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png
     type: url-test
     rule: false
-    regex: (?=.*(?:香港|HK|Hong Kong))(?=.*0\.\d+x)
+    regex: (?=.*(?:香港|HK|Hong Kong))(?=.*0\.\d+[×x倍])
   - name: 🇸🇬 新加坡低倍率
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png
     type: url-test
     rule: false
-    regex: (?=.*(?:新加坡|SG|Singapore))(?=.*0\.\d+x)
+    regex: (?=.*(?:新加坡|SG|Singapore))(?=.*0\.\d+x[×x倍])
   - name: 🇯🇵 日本低倍率
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
     type: url-test
     rule: false
-    regex: (?=.*(?:日本|JP|Japan))(?=.*0\.\d+x)
+    regex: (?=.*(?:日本|JP|Japan))(?=.*0\.\d+[×x倍])
   - name: 🇺🇲 美国低倍率
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
     type: url-test
     rule: false
-    regex: (?=.*(?:美国|US|United States))(?=.*0\.\d+x)
+    regex: (?=.*(?:美国|US|United States))(?=.*0\.\d+[×x倍])
   - name: 🇨🇳 台湾低倍率
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Taiwan.png
     type: url-test
     rule: false
-    regex: (?=.*(?:台湾|TW|Taiwan))(?=.*0\.\d+x)
+    regex: (?=.*(?:台湾|TW|Taiwan))(?=.*0\.\d+[×x倍])
   - name: 🇭🇰 香港节点
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png
     type: url-test
     rule: false
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(x|倍))(?!.*1\.[1-9]*(x|倍))(?!.*0\.\d+(x|倍))(?=.*(?:香港|HK|Hong Kong))
+    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?=.*(?:香港|HK|Hong Kong))
   - name: 🇸🇬 新加坡节点
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png
     type: url-test
     rule: false
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(x|倍))(?!.*1\.[1-9]*(x|倍))(?!.*0\.\d+(x|倍))(?!.*SG-04)(?=.*(?:新加坡|SG|Singapore))
+    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?!.*SG-04)(?=.*(?:新加坡|SG|Singapore))
   - name: 🇯🇵 日本节点
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
     type: url-test
     rule: false
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(x|倍))(?!.*1\.[1-9]*(x|倍))(?!.*0\.\d+(x|倍))(?=.*(?:日本|JP|Japan))
+    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?=.*(?:日本|JP|Japan))
   - name: 🇺🇲 美国节点
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
     type: url-test
     rule: false
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(x|倍))(?!.*1\.[1-9]*(x|倍))(?!.*0\.\d+(x|倍))(?=.*(?:美国|US|United States))
+    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?=.*(?:美国|US|United States))
   - name: 🇨🇳 台湾节点
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Taiwan.png
     type: url-test
     rule: false
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(x|倍))(?!.*1\.[1-9]*(x|倍))(?!.*0\.\d+(x|倍))(?=.*(?:台湾|TW|Taiwan))
+    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?=.*(?:台湾|TW|Taiwan))
