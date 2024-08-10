@@ -97,8 +97,9 @@ CUSTOM_PROXY_GROUP:
     rule: false
   - name: 🎥 流媒体
     icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Streaming.png
-    type: url-test
-    regex: ^(?!.*Core)(?!.*(?<!\.)[2-9](?:\.\d+)?(×|x|倍))(?!.*1\.[1-9]*(×|x|倍))(?!.*0\.\d+(×|x|倍))(?!.*SG-04)(?=.*(?:新加坡|SG|Singapore))
+    type: select
+    list: true
+    prior: 🇸🇬 新加坡低倍率,🇸🇬 新加坡节点
   - name: 🤖 ChatGPT
     icon: https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.82af6fe1.png
     type: select
@@ -128,7 +129,7 @@ CUSTOM_PROXY_GROUP:
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png
     type: url-test
     rule: false
-    regex: (?=.*(?:新加坡|SG|Singapore))(?=.*0\.\d+x[×x倍])
+    regex: (?=.*(?:新加坡|SG|Singapore))(?=.*0\.\d+[×x倍])
   - name: 🇯🇵 日本低倍率
     icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
     type: url-test
