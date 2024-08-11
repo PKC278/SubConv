@@ -157,6 +157,10 @@ async def pack(
         }
         if group.icon:
             result["icon"] = group.icon
+        if group.list and group.regex:
+            result.pop("proxies")
+            result["filter"] = group.regex
+            result["use"] = subscriptions
         return result
 
     for group in config.configInstance.CUSTOM_PROXY_GROUP:

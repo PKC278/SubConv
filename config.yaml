@@ -100,7 +100,8 @@ CUSTOM_PROXY_GROUP:
   - name: 🎥 流媒体
     icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Streaming.png
     type: select
-    rule: false
+    list: true
+    prior: ""
     regex: 新加坡|SG|Singapore
   - name: 🤖 ChatGPT
     icon: https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.82af6fe1.png
