@@ -34,7 +34,7 @@ HEAD:
   profile:
     store-selected: true
   external-ui-name: metacubexd
-  external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+  external-ui-url: "https://ghproxy.pkcsublog.top/https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
 TEST_URL: http://cp.cloudflare.com/generate_204
 RULESET:
   - - DIRECT
