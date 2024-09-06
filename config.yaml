@@ -31,6 +31,10 @@ HEAD:
         ports: [443, 8443]
       QUIC:
         ports: [443, 8443]
+    skip-domain:
+      - Mijia Cloud
+      - +.oray.com
+      - +.sunlogin.net
   profile:
     store-selected: true
 TEST_URL: http://cp.cloudflare.com/generate_204
