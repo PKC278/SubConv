@@ -9,7 +9,9 @@ from . import config
 import yaml
 import random
 
-from urllib.parse import urlparse, urlencode
+from urllib.parse import urlparse, urlencode, unquote
+import requests
+import re
 
 
 async def pack(
@@ -73,11 +75,23 @@ async def pack(
     providers = {"proxy-providers": {}}
     if url or urlstandby:
         if url:
-            for u in range(len(url)):
+            if len(url) == 1:
+                u = 0
+
+                def getSubName(url):
+                    headers = requests.head(
+                        url, headers={"User-Agent": "Clash"}
+                    ).headers
+                    match = re.search(
+                        r"filename\*?=([^;]+)", headers.get("content-disposition", "")
+                    )
+                    return unquote(match.group(1).split("''")[-1]) if match else None
+
                 subDomain = urlparse(subURL[u]).netloc.split(":")[0].replace(".", "")
+                subName = getSubName(subURL[u])
                 providers["proxy-providers"].update(
                     {
-                        "subscription{}".format(u): {
+                        "{}".format(subName): {
                             "type": "http",
                             "url": url[u],
                             "interval": int(interval),
@@ -91,6 +105,27 @@ async def pack(
                         }
                     }
                 )
+            if len(url) > 1:
+                for u in range(len(url)):
+                    subDomain = (
+                        urlparse(subURL[u]).netloc.split(":")[0].replace(".", "")
+                    )
+                    providers["proxy-providers"].update(
+                        {
+                            "subscription{}".format(u): {
+                                "type": "http",
+                                "url": url[u],
+                                "interval": int(interval),
+                                "path": "./sub/{}{}.yaml".format(subDomain, u),
+                                "health-check": {
+                                    "enable": True,
+                                    "interval": 1800,
+                                    # "lazy": True,
+                                    "url": config.configInstance.TEST_URL,
+                                },
+                            }
+                        }
+                    )
         if urlstandby:
             for u in range(len(urlstandby)):
                 subDomain = (
@@ -137,8 +172,12 @@ async def pack(
     # generate subscriptions and standby subscriptions list
     subscriptions = []
     if url:
-        for u in range(len(url)):
-            subscriptions.append("subscription{}".format(u))
+        if len(url) == 1:
+            u = 0
+            subscriptions.append("{}".format(subName))
+        if len(url) > 1:
+            for u in range(len(url)):
+                subscriptions.append("subscription{}".format(u))
     standby = subscriptions.copy()
     if urlstandby:
         for u in range(len(urlstandby)):
