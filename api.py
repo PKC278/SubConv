@@ -117,9 +117,8 @@ async def fetch_url(url: str, request: Request, method: str):
     max_redirects = 5
 
     async with httpx.AsyncClient() as client:
-        resp = await client.request(
-            method, url, headers={"User-Agent": request.headers["User-Agent"]}
-        )
+        resp_headers = {"User-Agent": "clash.meta"}
+        resp = await client.request(method, url, headers=resp_headers)
         if resp.status_code < 200 or resp.status_code >= 400:
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
         elif resp.status_code >= 300 and resp.status_code < 400:
@@ -127,9 +126,7 @@ async def fetch_url(url: str, request: Request, method: str):
                 if redirect_count >= max_redirects:
                     raise HTTPException(status_code=500, detail="Too many redirects")
                 url = resp.headers["Location"]
-                resp = await client.request(
-                    method, url, headers={"User-Agent": request.headers["User-Agent"]}
-                )
+                resp = await client.request(method, url, headers=resp_headers)
                 redirect_count += 1
                 if resp.status_code < 200 or resp.status_code >= 400:
                     raise HTTPException(status_code=resp.status_code, detail=resp.text)
@@ -238,6 +235,11 @@ async def sub(request: Request):
 
     if url is not None and len(url) == 1:
         resp, headers = await fetch_url(url[0], request, method="HEAD")
+        match = re.search(
+            r"filename\*?=([^;]+)", headers.get("Content-Disposition", "")
+        )
+        subName = unquote(match.group(1).split("''")[-1]) if match else None
+        subDomain = urlparse(url[0]).netloc.split(":")[0].replace(".", "")
 
     content = []
     if url is not None:
@@ -271,6 +273,8 @@ async def sub(request: Request):
         content=content,
         interval=interval,
         domain=domain,
+        subDomain=subDomain,
+        subName=subName,
         short=short,
         notproxyrule=notproxyrule,
         base_url=request.base_url,

@@ -9,8 +9,7 @@ from . import config
 import yaml
 import random
 
-from urllib.parse import urlparse, urlencode, unquote
-import requests
+from urllib.parse import urlparse, urlencode
 import re
 
 
@@ -24,6 +23,8 @@ async def pack(
     content: str,
     interval: str,
     domain: str,
+    subDomain: str,
+    subName: str,
     short: str,
     notproxyrule: str,
     base_url: str,
@@ -77,18 +78,6 @@ async def pack(
         if url:
             if len(url) == 1:
                 u = 0
-
-                def getSubName(url):
-                    headers = requests.head(
-                        url, headers={"User-Agent": "Clash"}
-                    ).headers
-                    match = re.search(
-                        r"filename\*?=([^;]+)", headers.get("content-disposition", "")
-                    )
-                    return unquote(match.group(1).split("''")[-1]) if match else None
-
-                subDomain = urlparse(subURL[u]).netloc.split(":")[0].replace(".", "")
-                subName = getSubName(subURL[u])
                 providers["proxy-providers"].update(
                     {
                         "{}".format(subName): {

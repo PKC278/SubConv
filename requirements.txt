@@ -4,4 +4,3 @@ PyYAML
 uvicorn
 pydantic-settings-yaml
 setuptools
-requests
