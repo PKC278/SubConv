@@ -41,10 +41,10 @@ async def pack(
             }
         else:
             for key, value in newHead["geox-url"].items():
-                newHead["geox-url"][key] = "https://mirror.ghproxy.com/" + value
+                newHead["geox-url"][key] = "https://ghproxy.cc/" + value
             newHead["dns"]["nameserver-policy"] = {
                 urlparse(str(base_url)).hostname: "223.5.5.5",
-                "mirror.ghproxy.com": "223.5.5.5",
+                "ghproxy.cc": "223.5.5.5",
             }
         result.update(newHead)
 
@@ -353,7 +353,7 @@ async def pack(
     rules = {"rules": []}
     rules["rules"].append(f"DOMAIN,{domain},DIRECT")
     if notproxyrule is None:
-        rules["rules"].append("DOMAIN,mirror.ghproxy.com,DIRECT")
+        rules["rules"].append("DOMAIN,ghproxy.cc,DIRECT")
 
     for k, v in rule_map.items():
         if not k.startswith("[]"):
