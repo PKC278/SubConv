@@ -356,6 +356,8 @@ async def pack(
         rules["rules"].append("DOMAIN,ghproxy.cc,DIRECT")
 
     for k, v in rule_map.items():
+        if v not in proxyGroupAndProxyList:
+            continue
         if not k.startswith("[]"):
             rules["rules"].append(f"RULE-SET,{k},{v}")
         elif k[2:] != "FINAL" and k[2:] != "MATCH":
