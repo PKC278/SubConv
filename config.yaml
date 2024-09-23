@@ -99,12 +99,6 @@ CUSTOM_PROXY_GROUP:
     type: select
     manual: true
     rule: false
-  - name: 🎥 流媒体
-    icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Streaming.png
-    type: select
-    list: true
-    prior: ""
-    regex: 新加坡|SG|Singapore
   - name: 🤖 ChatGPT
     icon: https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.82af6fe1.png
     type: select
@@ -117,6 +111,12 @@ CUSTOM_PROXY_GROUP:
     icon: https://github.com/shindgewongxj/WHATSINStash/raw/main/icon/bing.png
     type: select
     prior: DIRECT
+  - name: 🎥 流媒体
+    icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Streaming.png
+    type: select
+    list: true
+    prior: ""
+    regex: 新加坡|SG|Singapore
   - name: SpeedTest
     icon: https://b.cdnst.net/images/favicons/favicon-180.png
     type: select
