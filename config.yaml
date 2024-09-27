@@ -103,7 +103,7 @@ CUSTOM_PROXY_GROUP:
     icon: https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.82af6fe1.png
     type: select
     list: true
-    prior: "🇸🇬 新加坡低倍率,🇯🇵 日本低倍率,🇺🇲 美国低倍率,🇨🇳 台湾低倍率,🇸🇬 新加坡节点,🇯🇵 日本节点,🇺🇲 美国节点,🇨🇳 台湾节点"
+    prior: "-🇭🇰 香港低倍率,-🇭🇰 香港节点"
   - name: 🎮 游戏平台
     icon: https://github.com/shindgewongxj/WHATSINStash/raw/main/icon/applegamecenter.png
     type: select

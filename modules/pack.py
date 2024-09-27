@@ -198,16 +198,23 @@ async def pack(
         rule = group.rule
 
         if type == "select" and rule:
+            common_proxies = [
+                _group.name
+                for _group in config.configInstance.CUSTOM_PROXY_GROUP
+                if _group.rule == False and _group.name != "🚀 手动选择"
+            ]
             if list:
                 prior = group.prior.split(",")
-                proxies = [*prior, "🚀 手动选择"]
+                for i, item in enumerate(prior):
+                    if item.startswith("-"):
+                        blacklist_flag = True
+                        common_proxies.remove(prior[i][1:])
+                if blacklist_flag:
+                    proxies = [*common_proxies, "🚀 手动选择"]
+                else:
+                    proxies = [*prior, "🚀 手动选择"]
             else:
                 prior = group.prior
-                common_proxies = [
-                    _group.name
-                    for _group in config.configInstance.CUSTOM_PROXY_GROUP
-                    if _group.rule == False and _group.name != "🚀 手动选择"
-                ]
                 if prior == "DIRECT":
                     proxies = ["DIRECT", "🚀 节点选择", *common_proxies, "🚀 手动选择"]
                 elif prior == "REJECT":
