@@ -146,15 +146,15 @@ async def pack(
 
     # add proxy select
     proxySelect = {
-        "name": "🚀 节点选择",
+        "name": "节点选择",
         "type": "select",
         "icon": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/erdongchanyo/Auto.png",
         "proxies": [],
     }
     for group in config.configInstance.CUSTOM_PROXY_GROUP:
-        if group.rule == False and group.name != "🚀 手动选择":
+        if group.rule == False and group.name != "手动选择":
             proxySelect["proxies"].append(group.name)
-    proxySelect["proxies"].append("🚀 手动选择")
+    proxySelect["proxies"].append("手动选择")
     proxySelect["proxies"].append("DIRECT")
     proxyGroups["proxy-groups"].append(proxySelect)
 
@@ -201,7 +201,7 @@ async def pack(
             common_proxies = [
                 _group.name
                 for _group in config.configInstance.CUSTOM_PROXY_GROUP
-                if _group.rule == False and _group.name != "🚀 手动选择"
+                if _group.rule == False and _group.name != "手动选择"
             ]
             if list:
                 prior = group.prior.split(",")
@@ -210,29 +210,29 @@ async def pack(
                         blacklist_flag = True
                         common_proxies.remove(prior[i][1:])
                 if blacklist_flag:
-                    proxies = [*common_proxies, "🚀 手动选择"]
+                    proxies = [*common_proxies, "手动选择"]
                 else:
-                    proxies = [*prior, "🚀 手动选择"]
+                    proxies = [*prior, "手动选择"]
             else:
                 prior = group.prior
                 if prior == "DIRECT":
-                    proxies = ["DIRECT", "🚀 节点选择", *common_proxies, "🚀 手动选择"]
+                    proxies = ["DIRECT", "节点选择", *common_proxies, "手动选择"]
                 elif prior == "REJECT":
                     proxies = [
                         "REJECT",
                         "DIRECT",
-                        "🚀 节点选择",
+                        "节点选择",
                         *common_proxies,
-                        "🚀 手动选择",
+                        "手动选择",
                     ]
                 elif prior == "PROXY":
-                    proxies = ["🚀 节点选择", *common_proxies, "🚀 手动选择"]
+                    proxies = ["节点选择", *common_proxies, "手动选择"]
                 elif prior == "FINAL":
-                    proxies = ["🚀 节点选择", "DIRECT"]
+                    proxies = ["节点选择", "DIRECT"]
                 else:
                     prior = group.prior.split(",")
                     else_proxies = [p for p in common_proxies if p not in prior]
-                    proxies = [*prior, *else_proxies, "🚀 手动选择", "DIRECT"]
+                    proxies = [*prior, *else_proxies, "手动选择", "DIRECT"]
 
             proxyGroups["proxy-groups"].append(
                 create_proxy_group(group, prior, proxies)
