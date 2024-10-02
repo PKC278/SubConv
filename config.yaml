@@ -100,7 +100,7 @@ CUSTOM_PROXY_GROUP:
     manual: true
     rule: false
   - name: 🤖 ChatGPT
-    icon: https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.82af6fe1.png
+    icon: https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/ChatGPT.png
     type: select
     list: true
     prior: "-🇭🇰 香港低倍率,-🇭🇰 香港节点"
