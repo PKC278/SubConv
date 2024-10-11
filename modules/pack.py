@@ -34,19 +34,7 @@ async def pack(
 
     if short is None:
         # head of config
-        newHead = copy.deepcopy(config.configInstance.HEAD)
-        if notproxyrule:
-            newHead["dns"]["nameserver-policy"] = {
-                urlparse(str(base_url)).hostname: "223.5.5.5"
-            }
-        else:
-            for key, value in newHead["geox-url"].items():
-                newHead["geox-url"][key] = "https://ghproxy.cc/" + value
-            newHead["dns"]["nameserver-policy"] = {
-                urlparse(str(base_url)).hostname: "223.5.5.5",
-                "ghproxy.cc": "223.5.5.5",
-            }
-        result.update(newHead)
+        result.update(config.configInstance.HEAD)
 
     # proxies
     proxies = {"proxies": []}
@@ -359,8 +347,6 @@ async def pack(
     # add rule
     rules = {"rules": []}
     rules["rules"].append(f"DOMAIN,{domain},DIRECT")
-    if notproxyrule is None:
-        rules["rules"].append("DOMAIN,ghproxy.cc,DIRECT")
 
     for k, v in rule_map.items():
         if v not in proxyGroupAndProxyList:

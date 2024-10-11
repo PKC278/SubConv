@@ -12,10 +12,10 @@ HEAD:
       - https://dns.alidns.com/dns-query
       - https://doh.pub/dns-query
   geox-url:
-    geoip: "https://github.com/Loyalsoldier/geoip/releases/latest/download/geoip-only-cn-private.dat"
-    geosite: "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
-    mmdb: "https://github.com/Loyalsoldier/geoip/releases/latest/download/Country-only-cn-private.mmdb"
-    asn: "https://github.com/Loyalsoldier/geoip/releases/latest/download/Country-asn.mmdb"
+    geoip: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip-lite.dat"
+    geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+    mmdb: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip-lite.metadb"
+    asn: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/GeoLite2-ASN.mmdb"
   geo-auto-update: true
   geo-update-interval: 168
   unified-delay: true
